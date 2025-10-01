@@ -11,26 +11,30 @@ import "@blocknote/mantine/style.css";
 import { FaProjectDiagram } from "react-icons/fa";
 
 // ====================================================================================
-// 1. CUSTOM BLOCK DEFINITION (ProjectCard)
+// 1. CUSTOM BLOCK DEFINITION (ProjectCard) - WITH CORRECTED API STRUCTURE
 // ====================================================================================
 
 const projectCardSpec = {
   type: "projectCard",
-  props: {
-    title: { default: "Untitled Project" },
-    previewImage: { default: "" },
-    nestedContent: { default: [] },
-  },
   content: "none",
+  // CORRECTED: Props are now defined inside the `propSchema` object
+  propSchema: {
+    title: {
+      default: "Untitled Project",
+    },
+    previewImage: {
+      default: "",
+    },
+    nestedContent: {
+      default: [],
+    },
+  },
 } as const;
-
-// REMOVED `type ProjectCardBlock = ...` as it's no longer needed and causes errors.
 
 const ProjectCard = createReactBlockSpec(
   projectCardSpec,
   {
     render: (props) => {
-      // REMOVED the type assertion `as ProjectCardBlock`. TypeScript now infers this automatically.
       const block = props.block;
       
       const handleClick = () => {
@@ -87,9 +91,11 @@ const ProjectCardModal = ({ isOpen, block, onClose, mainEditor }: ModalProps) =>
     const imageBlock = nestedContent.find(b => b.type === 'image');
     const previewImage = (imageBlock?.props as any)?.url || '';
     
-    mainEditor.updateBlock(block, {
-      props: { title, previewImage, nestedContent },
-    });
+    if (block) {
+        mainEditor.updateBlock(block, {
+            props: { title, previewImage, nestedContent },
+        });
+    }
   };
 
   return (
@@ -150,10 +156,12 @@ export default function BlockNoteEditor() {
   }, [editor]);
 
   const handleSave = () => {
-    const content = editor.document;
-    localStorage.setItem("editorContent", JSON.stringify(content));
-    fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(content) });
-    alert("Content saved!");
+    if (editor) {
+        const content = editor.document;
+        localStorage.setItem("editorContent", JSON.stringify(content));
+        fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(content) });
+        alert("Content saved!");
+    }
   };
 
   return (
