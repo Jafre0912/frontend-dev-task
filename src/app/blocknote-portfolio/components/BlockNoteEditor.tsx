@@ -24,13 +24,15 @@ const projectCardSpec = {
   content: "none",
 } as const;
 
-type ProjectCardBlock = Block<typeof projectCardSpec>;
+// REMOVED `type ProjectCardBlock = ...` as it's no longer needed and causes errors.
 
 const ProjectCard = createReactBlockSpec(
   projectCardSpec,
   {
     render: (props) => {
-      const block = props.block as ProjectCardBlock;
+      // REMOVED the type assertion `as ProjectCardBlock`. TypeScript now infers this automatically.
+      const block = props.block;
+      
       const handleClick = () => {
         const event = new CustomEvent<Block>("openProjectModal", { detail: block });
         window.dispatchEvent(event);
@@ -113,7 +115,6 @@ export default function BlockNoteEditor() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [editingBlock, setEditingBlock] = useState<Block | null>(null);
   
-  // FIXED: Moved `blockSpecs` from the <BlockNoteView> component to here
   const editor = useCreateBlockNote({
     blockSpecs: {
       ...defaultBlockSpecs,
@@ -168,7 +169,6 @@ export default function BlockNoteEditor() {
           <BlockNoteView
             editor={editor}
             theme="light"
-            // FIXED: Removed `blockSpecs` from here
           />
         </div>
       </div>

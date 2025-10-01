@@ -19,7 +19,7 @@ export default function Home() {
               View Editor
             </Link>
             <a
-              href="https://github.com/your-org/blocknote-portfolio-starter"
+              href="https://github.com/Jafre0912/frontend-dev-task"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors"
